@@ -9,7 +9,7 @@ int MAXLINE = 10;
 void usage() {
   printf("usage:\n");
   printf("  -h display this help message\n");
-  printf("  -i host ip\n");
+  printf("  -h host ip\n");
   printf("  -p port\n");
 }
 
