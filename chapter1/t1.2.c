@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -52,6 +50,7 @@ int main(int argc, char* argv[]) {
   }
   if (connect(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) {
     printf("connect error\n");
+    return 0;
   }
   while ((n = read(sockfd, recvline, MAXLINE)) > 0) {
     recvline[n] = 0;

@@ -1,17 +1,11 @@
-#include <stdio.h>
-#include <stdio.h>
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <time.h>
-#include <string.h>
 
 #define MAXLINE 80
 
@@ -54,7 +48,7 @@ int main(int argc, char* argv[]) {
 
   if (bind(listenfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) {
     printf("bind error, abort\n");
-    exit(1);
+    return 1;
   }
 
   listen(listenfd, 10);
@@ -62,8 +56,8 @@ int main(int argc, char* argv[]) {
   for ( ; ; ) {
     connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
     tick = time(NULL);
-    snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&tick));
-    printf("time=%s\n", buff);
+    snprintf(buff, sizeof(buff), "%.24s\n", ctime(&tick));
+    printf("time=%s", buff);
     fflush(stdout);
     write(connfd, buff, strlen(buff));
     close(connfd);
