@@ -55,7 +55,6 @@ public class P5 {
         }
         int max = 0;
         int begin  = 0, end = 0;
-
         for (int i = 0; i <= length - 2; i++) {
             if (s.charAt(i) == s.charAt(i + 1)) {
                 flag[i][i + 1] = 1;
@@ -77,7 +76,6 @@ public class P5 {
                 }
             }
         }
-
         return s.substring(begin, end + 1);
     }
 
