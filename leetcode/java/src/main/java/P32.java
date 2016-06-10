@@ -2,72 +2,47 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Created by taihejin on 16-6-7.
  */
 public class P32 {
 
-    public boolean valid(String s, boolean[][] matrix,  int low, int high) {
-        boolean valid = false;
-        for (int k = low + 1; k < high; k += 2) {
-            if (matrix[low][k] && matrix[k + 1][high]) {
-                valid = true;
-                break;
-            }
-        }
-        if (!valid) {
-            for (int k = low + 2; k < high; k += 2) {
-                if (matrix[low + 1][k] && matrix[k + 1][high - 1]) {
-                    valid = true;
-                    break;
-                }
-            }
-        }
-        return valid;
-    }
-
     public int longestValidParentheses(String s) {
-        if (s == null || s.length() <= 1) {
-            return 0;
-        }
         int size = s.length();
-        boolean matrix[][] = new boolean[size][size];
-        // base
-        int max = 0;
-        for (int i = 0; i <= size - 2; i++) {
-            if (s.charAt(i) == '(' && s.charAt(i + 1) == ')') {
-                matrix[i][i + 1] = true;
-                max = 2;
+        Deque<Integer> stack = new ArrayDeque<Integer>();
+        for (int i = 0; i < size; i++) {
+            if (s.charAt(i) == ')' && !stack.isEmpty() && s.charAt(stack.peek()) == '(') {
+                stack.pop();
             } else {
-                matrix[i][i + 1] = false;
+                stack.push(i);
             }
         }
-        for (int len = 4; len <= size; len += 2) {
-            for (int low = 0; low <= size - len; low += 2) {
-                int high = low + len - 1;
-                if (s.charAt(low) == '(' && s.charAt(high) == ')' && valid(s, matrix, low, high)) {
-                    matrix[low][high] = true;
-                    max = Math.max(len, max);
-                } else {
-                    matrix[low][high] = false;
-                }
+        int maxLength = 0;
+        if (stack.isEmpty()) {
+            return size;
+        } else {
+            int low = 0, high = size;
+            while (!stack.isEmpty()) {
+                low = stack.pop();
+                maxLength = Math.max(maxLength, high - low - 1);
+                high = low;
             }
-            for (int low = 1; low <= size - len; low += 2) {
-                int high = low + len - 1;
-                if (s.charAt(low) == '(' && s.charAt(high) == ')' && valid(s, matrix, low, high)) {
-                    matrix[low][high] = true;
-                    max = Math.max(len, max);
-                } else {
-                    matrix[low][high] = false;
-                }
-            }
+            maxLength = Math.max(maxLength, high);
         }
-        return max;
+        return maxLength;
     }
 
     @Test
-    public void doTest() {
+    public void test1() {
+        String str = "()(()";
+        int ret = longestValidParentheses(str);
+        Assert.assertEquals(2, ret);
+    }
+
+    @Test
+    public void doTest0() {
         int ret = longestValidParentheses("(()");
         System.out.println(ret);
         Assert.assertEquals(2, ret);
@@ -78,6 +53,15 @@ public class P32 {
         int ret = longestValidParentheses(")()())");
         System.out.println(ret);
         Assert.assertEquals(4, ret);
+        ret = longestValidParentheses(")()()()()())");
+        System.out.println(ret);
+        Assert.assertEquals(10, ret);
+    }
+
+    public void doTest(String str, int len) {
+        int ret = longestValidParentheses(str);
+        System.out.println(ret);
+        Assert.assertEquals(len, ret);
     }
 
     @Test
@@ -86,5 +70,21 @@ public class P32 {
         int ret = longestValidParentheses(s);
         System.out.println(ret);
         Assert.assertEquals(0, ret);
+    }
+
+    @Test
+    public void doTestAll() {
+        doTest("", 0);
+        doTest("(", 0);
+        doTest(")", 0);
+        doTest("()", 2);
+        doTest("()()", 4);
+        doTest(")())", 2);
+        doTest("((((", 0);
+        doTest("))))", 0);
+        doTest("(((())))()()", 12);
+        doTest("((((()))))()())", 14);
+        doTest("((((())))()()))", 14);
+        doTest("((((())))()()))(", 14);
     }
 }
