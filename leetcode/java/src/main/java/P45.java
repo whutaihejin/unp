@@ -8,21 +8,17 @@ public class P45 {
 
     public int jump(int[] nums) {
         int size = nums.length;
-        int[] f = new int[size];
-        f[0] = 0;
-        int[] last = new int[size];
-        last[0] = 0;
-        for (int p = 1; p < size; p++) {
-            int min = Integer.MAX_VALUE;
-            for (int k = last[p - 1]; k < p; k++) {
-                if (p - k <= nums[k] && f[k] + 1 < min) {
-                    min = f[k] + 1;
-                    last[p] = k;
-                }
+        int ret = 0;
+        int curr = 0;
+        int last = 0;
+        for (int i = 0; i < size; i++) {
+            if (i > last) {
+                last = curr;
+                ret++;
             }
-            f[p] = min;
+            curr = Math.max(curr, i + nums[i]);
         }
-        return f[size - 1];
+       return ret;
     }
 
     @Test
