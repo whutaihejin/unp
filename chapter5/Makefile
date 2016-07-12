@@ -1,9 +1,11 @@
 .PHONY : ALL
-ALL :  server
+ALL :  client server
 
+client:
+	gcc -Wall -g -o client client.c
 server:
-	gcc -g -o server server.c
+	gcc -Wall -g -o server server.c
 
 .PHONY : clean
 clean : 
-	 rm -rf  server
+	 rm -rf  client server
