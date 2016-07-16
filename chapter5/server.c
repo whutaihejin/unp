@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "util.h"
@@ -34,9 +35,12 @@ int main(int argc, char* argv[]) {
   signal(SIGCHLD, sig_chld);
   for (; ;) {
     len = sizeof(cliaddr);
-    connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &len);
-    if (connfd < 0) {
-      exit_print("accept error.\n");
+    if ((connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &len)) < 0) {
+      if (errno == EINTR) {
+        continue;
+      } else {
+        exit_print("accept error.\n");
+      }
     }
     if ((pid = fork()) == 0) {
       close(listenfd);
