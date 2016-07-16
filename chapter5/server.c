@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "util.h"
+#include "server_signal.h"
 
 #define MAX_SIZE  80
 
@@ -29,6 +31,7 @@ int main(int argc, char* argv[]) {
   if (listen(listenfd, 10) != 0) {
     exit_print("listen error.\n");
   }
+  signal(SIGCHLD, sig_chld);
   for (; ;) {
     len = sizeof(cliaddr);
     connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &len);
@@ -52,7 +55,7 @@ void echo(int sockfd) {
   ssize_t n;
   while ((n = read(sockfd, buf, sizeof(buf))) > 0) {
     buf[n] = '\0';
-    printf("%s\n", buf);
+    printf("server: %s", buf);
     fflush(stdout);
     write(sockfd, buf, n);
   }

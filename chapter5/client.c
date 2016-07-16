@@ -22,14 +22,17 @@ int main(int argc, char* argv[]) {
 
   connect(sockfd, (const struct sockaddr*)&servaddr, sizeof(servaddr));
   
-  char buf[MAX_SIZE];
-  char wbuf[MAX_SIZE];
-  while (scanf("%s", buf) != EOF) {
-    snprintf(wbuf, sizeof(wbuf), "server: %s", buf);
-    write(sockfd, wbuf, strlen(wbuf));
-    ssize_t len = read(sockfd, buf, sizeof(buf));
-    buf[len] = '\0';
-    printf("%s\n", buf);
+  char sendbuf[MAX_SIZE];
+  char recvbuf[MAX_SIZE];
+  ssize_t len;
+  while (fgets(sendbuf, sizeof(sendbuf), stdin) != NULL) {
+    write(sockfd, sendbuf, strlen(sendbuf));
+    if ((len = read(sockfd, recvbuf, sizeof(recvbuf))) <= 0) {
+      continue;
+    }
+    recvbuf[len] = '\0';
+    fputs("client: ", stdout);
+    fputs(recvbuf, stdout);
     fflush(stdout);
   }
   return 0;
