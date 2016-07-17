@@ -10,8 +10,8 @@
 
 int main(int argc, char* argv[]) {
   struct sockaddr_in servaddr;
-  int i, sockfd[5];
-  for (i = 0; i < 5; i++) {
+  int i, sockfd[1];
+  for (i = 0; i < 1; i++) {
     if ((sockfd[i] = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       exit_print("socket error.\n");
     }
@@ -27,9 +27,15 @@ int main(int argc, char* argv[]) {
   char recvbuf[MAX_SIZE];
   ssize_t len;
   while (fgets(sendbuf, sizeof(sendbuf), stdin) != NULL) {
-    write(sockfd[0], sendbuf, strlen(sendbuf));
+    if (write(sockfd[0], sendbuf, strlen(sendbuf)) < 0) {
+      exit_print("client write error.\n");
+    }
+    sleep(1);
+    if (write(sockfd[0], sendbuf + 1, strlen(sendbuf) - 1) < 0) {
+      exit_print("client write error.\n");
+    }
     if ((len = read(sockfd[0], recvbuf, sizeof(recvbuf))) <= 0) {
-      continue;
+      exit_print("client read error: server terminated prematurely.\n");
     }
     recvbuf[len] = '\0';
     fputs("client: ", stdout);
