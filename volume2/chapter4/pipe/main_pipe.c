@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void client(int, int);
+void client(const char*, int, int);
 void server(int, int);
 
 int main(int argc, char* argv[]) {
+  if (argc < 2) {
+    printf("usage: %s <pathname>\n", argv[0]);
+    return 1;
+  }
   int pipe1[2];
   int pipe2[2];
   pid_t child_pid;
@@ -25,7 +29,6 @@ int main(int argc, char* argv[]) {
     close(pipe1[1]);
     close(pipe2[0]);
     
-    sleep(6);
     server(pipe1[0], pipe2[1]);
     exit(0);
   }
@@ -34,7 +37,7 @@ int main(int argc, char* argv[]) {
   close(pipe1[0]);
   close(pipe2[1]);
 
-  client(pipe2[0], pipe1[1]);
+  client(argv[1], pipe2[0], pipe1[1]);
 
   // wait for child to terminate
   waitpid(child_pid, NULL, 0);

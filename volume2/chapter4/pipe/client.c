@@ -4,20 +4,19 @@
 
 #define MAXLINE 1024
 // client
-void client(int read_fd, int write_fd) {
+void client(const char* pathname, int read_fd, int write_fd) {
   size_t len;
   ssize_t n;
   char buff[MAXLINE];
  
   // read pathname
-  fgets(buff, MAXLINE, stdin);
-  len = strlen(buff);
+  len = strlen(pathname);
   if (buff[len -1] == '\n') {
     len--;
   }
 
   // write pathname to IPC channel
-  write(write_fd, buff, len);
+  write(write_fd, pathname, len);
 
   // read from IPC, write to standard output
   while ((n = read(read_fd, buff, MAXLINE)) > 0) {
